@@ -3,24 +3,24 @@ const sequelize = require('../config/database');
 
 const Text = sequelize.define('Text', {
   id: {
-    type: DataTypes.INTEGER.UNSIGNED,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
-  source: {
+  content: {
     type: DataTypes.STRING,
     allowNull: false
   },
-	author: {
-		type: DataTypes.STRING,
-    allowNull: false
+	source: {
+		type: DataTypes.STRING(50),
+    allowNull: true
 	},
-	content: {
-		type: DataTypes.STRING,
+	author: {
+		type: DataTypes.STRING(50),
     allowNull: true
 	}
 }, {
-  tableName: 'texts',
+  tableName: 'text',
   timestamps: false
 });
 

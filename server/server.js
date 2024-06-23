@@ -4,7 +4,7 @@ const cors = require('cors');
 const sequelize = require('./config/database');
 const User = require('./models/user');
 const Text = require('./models/text');
-const Attempt = require('./models/attempt');
+//const Attempt = require('./models/attempt');
 
 const app = express();
 const port = 8080;
@@ -14,16 +14,15 @@ app.use(bodyParser.json());
 
 // Регистрация
 app.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
-    const user = await User.create({ username, email, password });
+    const user = await User.create({ name, password, email});
     res.json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// Вход
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -37,7 +36,19 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Получение текста для теста
+app.get('/attempts/:userId', async (req, res) => {
+  try {
+    const attempts = await Attempt.findAll({
+      where: { userId: req.params.userId },
+      include: [{ model: User, attributes: ['username'] }],
+      order: [['createdAt', 'DESC']]
+    });
+    res.json(attempts);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 app.get('/texts/:id', async (req, res) => {
   try {
     const text = await Text.findByPk(req.params.id);
@@ -47,32 +58,8 @@ app.get('/texts/:id', async (req, res) => {
   }
 });
 
-// Сохранение попытки
-app.post('/attempts', async (req, res) => {
-  const { userId, textId, speed, accuracy } = req.body;
-  const score = speed * accuracy;
-  try {
-    const attempt = await Attempt.create({ userId, textId, speed, accuracy, score });
-    res.json(attempt);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
 
-// Получение таблицы лидеров
-app.get('/leaderboard', async (req, res) => {
-  try {
-    const leaderboard = await Attempt.findAll({
-      include: [{ model: User, attributes: ['username'] }],
-      order: [['score', 'DESC']],
-      limit: 10
-    });
-    res.json(leaderboard);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
+/*
 sequelize.authenticate().then(() => {
   console.log('Connection to the database has been established successfully.');
   app.listen(port, () => {
@@ -81,3 +68,14 @@ sequelize.authenticate().then(() => {
 }).catch(err => {
   console.error('Unable to connect to the database:', err);
 });
+*/
+sequelize.sync() // Это синхронизирует модели с базой данных
+  .then(() => {
+    console.log('Database synced successfully.');
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  })
+  .catch(err => {
+    console.error('Unable to sync database:', err);
+  });

@@ -5,28 +5,12 @@ const Text = require('./text');
 
 const Attempt = sequelize.define('Attempt', {
   id: {
-    type: DataTypes.INTEGER.UNSIGNED,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
-  userId: {
-    type: DataTypes.INTEGER.UNSIGNED,
-    allowNull: false,
-    references: {
-      model: User,
-      key: 'id'
-    }
-  },
-  textId: {
-    type: DataTypes.INTEGER.UNSIGNED,
-    allowNull: false,
-    references: {
-      model: Text,
-      key: 'id'
-    }
-  },
   speed: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.FLOAT,
     allowNull: false
   },
   accuracy: {
@@ -34,11 +18,27 @@ const Attempt = sequelize.define('Attempt', {
     allowNull: false
   },
   score: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.INTEGER,
     allowNull: false
+  },
+  userId: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  textId: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    references: {
+      model: Text,
+      key: 'id'
+    }
   }
 }, {
-  tableName: 'attempts',
+  tableName: 'attempt',
   timestamps: false
 });
 
