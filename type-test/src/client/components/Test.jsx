@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import './styles.css';
 
-const Test = () => {
-  const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Facilisis mauris sit amet massa vitae tortor condimentum lacinia quis. Etiam non quam lacus suspendisse faucibus.';
+//todo sync charlenght
 
-  const [startTime, setStartTime] = useState(0);
+const Test = () => {
+  const [text, setText] = useState('');
+  const [textId, setTextId] = useState(1);
+
+  const [startTime, setStartTime] = useState(null);
   const [mistakes, setMistakes] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const [speed, setSpeed] = useState(0);
@@ -15,6 +18,20 @@ const Test = () => {
 	const [correctWrong, setCorrectWrong] = useState([]);
 	const [duration, setDuration] = useState(0);
 
+  useEffect(() => {
+    const fetchText = async () => {
+      try {
+        const response = await fetch(`/api/texts/${textId}`);
+        const data = await response.json();
+        setText(data.content);
+        restartTest();
+      } catch (error) {
+        console.error('Error fetching text:', error);
+      }
+    };
+    fetchText();
+  }, [textId]);
+
   const verifyValue = (value) => {
     return isNaN(value) || value < 0 || value > 10000 || !value || value === Infinity ? 0 : value;
   };
@@ -23,13 +40,25 @@ const Test = () => {
     const currentDuration = verifyValue(((Date.now() - startTime) / 1000).toFixed(0));
     const correctChars = charIndex - mistakes;
     const percent = verifyValue((correctChars / charIndex * 100).toFixed(0));
-    
     const wpm = verifyValue(((correctChars / 5) / (currentDuration / 60)).toFixed(0));
     setDuration(currentDuration);
     setAccuracy(percent);
     setSpeed(wpm);
   };
 	
+  const restartTest = () => {
+    console.log(textId);
+    setIsTyping(false);
+    setStartTime(null);
+    setCharIndex(0);
+    setDuration(0);
+    setMistakes(0);
+    setAccuracy(100);
+    setSpeed(0);
+    setCorrectWrong(Array(charRefs.current.length).fill(''));
+    inputRef.current.focus();
+    charRefs.current = [];
+  }
   useEffect(() => {
     inputRef.current.focus();
 		setCorrectWrong(Array(charRefs.current.length).fill(''));
@@ -47,6 +76,7 @@ const Test = () => {
 
   const handleChange = (e) => {
     const characters = charRefs.current;
+    console.log(characters.length);
     let currentChar = charRefs.current[charIndex];
     let typedChar = e.target.value.slice(-1);
     if (charIndex < characters.length) {
@@ -69,8 +99,18 @@ const Test = () => {
     } else setIsTyping(false);
   };
 
+  const changeText = () => {
+    setTextId(prevId => prevId + 1);
+  };
+
   return (
     <div className="container">
+      <div className="result">
+        <p>Время: <strong>{duration}</strong></p>
+        <p>Аккуратность: <strong>{accuracy}%</strong></p>
+        <p>WPM: <strong>{speed}</strong></p>
+        <button className="btn" onClick={restartTest}>Повтор</button>
+      </div>
       <div className="test">
         <input type="text" className="input-field" ref={inputRef} onChange={handleChange} />
         {
@@ -81,12 +121,7 @@ const Test = () => {
           ))
         }
       </div>
-      <div className="result">
-        <p>Время: <strong>{duration}</strong></p>
-        <p>Аккуратность: <strong>{accuracy}%</strong></p>
-        <p>WPM: <strong>{speed}</strong></p>
-        <button className="btn">Повтор</button>
-      </div>
+      <button className="btn" onClick={changeText}>Новый текст</button>
     </div>
   );
 };

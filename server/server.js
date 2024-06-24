@@ -4,7 +4,6 @@ const cors = require('cors');
 const sequelize = require('./config/database');
 const User = require('./models/user');
 const Text = require('./models/text');
-//const Attempt = require('./models/attempt');
 
 const app = express();
 const port = 8080;
@@ -12,7 +11,6 @@ const port = 8080;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Регистрация
 app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   try {
