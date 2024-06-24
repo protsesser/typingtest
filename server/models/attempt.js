@@ -21,17 +21,17 @@ const Attempt = sequelize.define('Attempt', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  userId: {
+  user_id: {
     type: DataTypes.BIGINT,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: User,
       key: 'id'
     }
   },
-  textId: {
+  text_id: {
     type: DataTypes.BIGINT,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: Text,
       key: 'id'
@@ -42,7 +42,9 @@ const Attempt = sequelize.define('Attempt', {
   timestamps: false
 });
 
-Attempt.belongsTo(User, { foreignKey: 'userId' });
-Attempt.belongsTo(Text, { foreignKey: 'textId' });
+//Attempt.belongsTo(User, { foreignKey: 'FK_attempt_user' });
+//Attempt.belongsTo(Text, { foreignKey: 'FK_attempt_text' });
+Attempt.belongsTo(User, { foreignKey: 'user_id' });
+Attempt.belongsTo(Text, { foreignKey: 'user_id' });
 
 module.exports = Attempt;

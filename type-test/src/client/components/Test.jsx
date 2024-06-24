@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import './styles.css';
-
-//todo sync charlength
+import Results from "./Results";
 
 const Test = () => {
   const [text, setText] = useState('');
@@ -17,6 +16,9 @@ const Test = () => {
   const charRefs = useRef([]);
 	const [correctWrong, setCorrectWrong] = useState([]);
 	const [duration, setDuration] = useState(0);
+  const [score, setScore] = useState(0);
+
+  const [openResults, setOpenResults] = useState();
 
   useEffect(() => {
     const fetchText = async () => {
@@ -44,6 +46,8 @@ const Test = () => {
     setDuration(currentDuration);
     setAccuracy(percent);
     setSpeed(wpm);
+    const calculateScore = (speed * (2*accuracy));
+    setScore(calculateScore);
   };
 	
   const restartTest = () => {
@@ -95,12 +99,45 @@ const Test = () => {
       updateTimer();
       if (charIndex === characters.length - 1) {
         setIsTyping(false);
+        saveTestResult();
+        setOpenResults(true);
       }
     } else setIsTyping(false);
   };
 
   const changeText = () => {
     setTextId(prevId => prevId + 1);
+  };
+
+  const saveTestResult = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      console.error("No user logged in.");
+      return;
+    }
+    console.log(`speed: ${speed}, accuracy: ${accuracy}, score: ${score}`);
+    const result = {
+      speed: speed,
+      accuracy: accuracy,
+      score: score,
+      user_id: user.id,
+      text_id: textId,      
+    };
+
+    try {
+      const response = await fetch('/api/attempt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(result),
+      });
+
+      const data = await response.json();
+      console.log('Test result saved:', data);
+    } catch (error) {
+      console.error('Error saving test result:', error);
+    }
   };
 
   return (
@@ -122,7 +159,8 @@ const Test = () => {
         }
       </div>
       <button className="btn" onClick={changeText}>Новый текст</button>
-    </div>
+    <Results openResults={openResults} onClose={()=>setOpenResults(false)} speed={speed} accuracy={accuracy} score={score}/>
+    </div>    
   );
 };
 
