@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import './styles.css';
 
-//todo sync charlenght
+//todo sync charlength
 
 const Test = () => {
   const [text, setText] = useState('');
