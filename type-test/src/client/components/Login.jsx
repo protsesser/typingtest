@@ -35,30 +35,30 @@ const Login = ({setOpenLogin, openLogin, setLogReg}) => {
 
   return (
     <div className={`fixed z-50 inset-0 flex justify-center items-center transition-colors ${openLogin ? "visible bg-black/20" : "invisible"}`}>
-      <div className={`bg-white rounded-lg shadow p-6
+      <div className={`bg-zinc-700 rounded-lg shadow p-6
       transition-all max-w-md`}>
         <form onSubmit={handleLogin}>
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-averia-libre font-bold">Login</h1>
+          <h1 className="text-2xl font-bold">Login</h1>
           <input            
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required 
-            className="h-12 w-full border-sky-200 border-2 rounded-lg p-2" placeholder="Your email">
+            className="h-12 w-full border-white border-2 rounded-lg p-2 bg-zinc-700" placeholder="Your email">
           </input>
           <input 
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required 
-            className="h-12 w-full border-sky-200 border-2 rounded-lg p-2" placeholder="Password">
+            className="h-12 w-full border-white border-2 rounded-lg p-2 bg-zinc-700" placeholder="Password">
           </input>
-          <button className=" w-full rounded-lg py-2 px-10 bg-sky-400 hover:bg-sky-600 text-black font-averia-libre font-bold text-2xl" type="submit">
+          <button className=" w-full rounded-lg py-2 px-10 bg-sky-400 hover:bg-sky-600 text-black  font-bold text-2xl" type="submit">
             Login
           </button>
           {message && <p>{message}</p>}
-          <p onClick={() => setLogReg(false)} className='cursor-pointer'>Зарегистрироваться</p>
+          <p onClick={() => setLogReg(false)} className='cursor-pointer text-sky-400'><u>Зарегистрироваться</u></p>
         </div>
         </form>
       </div>

@@ -5,6 +5,10 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily:{
+      'manrope': ['Manrope', 'sans-serif'],
+      //font-family: "Manrope", sans-serif;
+    },
     extend: {},
   },
   plugins: [],

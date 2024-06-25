@@ -4,6 +4,8 @@ import './styles.css';
 const Test = ({ setOpenResults, setLastAttemptId }) => {
   const [text, setText] = useState('');
   const [textId, setTextId] = useState(1);
+  const [source, setSource] = useState('');
+  const [author, setAuthor] = useState('');
 
   const [startTime, setStartTime] = useState(null);
   const [mistakes, setMistakes] = useState(0);
@@ -23,6 +25,8 @@ const Test = ({ setOpenResults, setLastAttemptId }) => {
         const response = await fetch(`/api/texts/${textId}`);
         const data = await response.json();
         setText(data.content);
+        setAuthor(data.author);
+        setSource(data.source);
         restartTest();
       } catch (error) {
         console.error('Error fetching text:', error);
@@ -142,24 +146,30 @@ const Test = ({ setOpenResults, setLastAttemptId }) => {
   };
 
   return (
-    <div className="container">
-      <div className="result">
-        <p>Время: <strong>{duration}</strong></p>
-        <p>Аккуратность: <strong>{accuracy}%</strong></p>
-        <p>WPM: <strong>{speed}</strong></p>
-        <button className="btn" onClick={restartTest}>Повтор</button>
+    <div className=" max-w-2xl m-2 bg-zinc-700 p-8 rounded-xl">
+      <div className="flex justify-between mb-4 border-b-2 pb-3 items-center">
+        <p>WPM: <div className="inline-block font-bold">{speed}</div></p>
+        <p>Аккуратность: <div className="inline-block font-bold">{accuracy}%</div></p>
+        <p>Время: <div className="inline-block font-bold">{duration}</div></p>
+        <button className="p-2 bg-sky-400 text-black rounded-lg font-bold hover:bg-sky-600" onClick={changeText}>Смена текста</button>
       </div>
-      <div className="test">
-        <input type="text" className="input-field" ref={inputRef} onChange={handleChange} />
+      <div className="test select-none box-border">
+        <input type="text" className="opacity-0 absolute w-96 h-16" ref={inputRef} onChange={handleChange} />
         {
           text.split("").map((char, index) => (
-            <span className={`char ${index === charIndex ? "active" : ""} ${correctWrong[index]}`} key={index} ref={(e) => charRefs.current[index] = e}>
+            <span className={`char cursor-text text-xl text-zinc-300 ${index === charIndex ? "active" : ""} ${correctWrong[index]}`} key={index} ref={(e) => charRefs.current[index] = e}>
               {char}
             </span>
           ))
         }
       </div>
-      <button className="btn" onClick={changeText}>Новый текст</button>
+      <div className="flex items-center mt-4 justify-between">
+        <div className="flex">
+        <p className="">"{source}"</p>
+        <p> - {author}</p>
+        </div>
+        <button className="p-2 bg-sky-400 text-black rounded-lg font-bold hover:bg-sky-600" onClick={restartTest}>Заново</button>
+      </div>
     </div>
   );
 };
