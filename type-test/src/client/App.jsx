@@ -4,12 +4,15 @@ import Login from "./components/Login";
 import Attempts from "./components/Attempts";
 import Test from "./components/Test";
 import Register from "./components/Register";
+import Leaderboard from "./components/Leaderboard";
+import UserAttempts from "./components/UserAttempts";
 
 
 function App() {
-  //const [isLogged, setIsLogged] = useState(false);
   const [openLogin, setOpenLogin] = useState(true);
   const [logReg, setLogReg] = useState(true);
+
+  const [testFinished, setTestFinished] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -28,6 +31,7 @@ function App() {
   return (
     <div className="App">
       <button onClick={handleLogout}>Выйти из аккаунта</button>
+      <UserAttempts/>
       <Test/>
 
       {(logReg ? (
@@ -35,6 +39,7 @@ function App() {
       ) : (
         <Register setOpenLogin={setOpenLogin} openLogin={openLogin} setLogReg={setLogReg}/>
       ))}
+      <Leaderboard/>
     </div>
   );
 }

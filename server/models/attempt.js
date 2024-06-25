@@ -42,8 +42,6 @@ const Attempt = sequelize.define('Attempt', {
   timestamps: false
 });
 
-//Attempt.belongsTo(User, { foreignKey: 'FK_attempt_user' });
-//Attempt.belongsTo(Text, { foreignKey: 'FK_attempt_text' });
 Attempt.belongsTo(User, { foreignKey: 'user_id' });
 Attempt.belongsTo(Text, { foreignKey: 'user_id' });
 

@@ -69,6 +69,60 @@ app.get('/texts/:id', async (req, res) => {
   }
 });
 
+app.get('/leaderboard', async (req, res) => {
+  try {
+    const attempts = await Attempt.findAll({
+      include: [{
+        model: User,
+        attributes: ['id', 'name'],
+      }],
+      attributes: ['id', 'speed', 'accuracy', 'score', 'user_id', 'text_id'],
+      order: [['score', 'DESC']],
+    });
+
+    const uniqueUserAttempts = {};
+    for (const attempt of attempts) {
+      if (!uniqueUserAttempts[attempt.userId]) {
+        uniqueUserAttempts[attempt.userId] = attempt;
+      }
+    }
+
+    const uniqueAttemptsArray = Object.values(uniqueUserAttempts);
+
+    res.json(uniqueAttemptsArray);
+  } catch (error) {
+    console.error('Error fetching top attempts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/user-attempts', async (req, res) => {
+  try {
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const attempts = await Attempt.findAll({
+      where: { user_id },
+      include: [{
+        model: User,
+        attributes: ['id', 'name'],
+      }],
+      attributes: ['id', 'speed', 'accuracy', 'score', 'user_id', 'text_id'],
+      order: [['id', 'DESC']], 
+      limit: 10
+    });
+
+    res.json(attempts);
+  } catch (error) {
+    console.error('Error fetching user attempts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 sequelize.sync()
   .then(() => {
     console.log('Database synced successfully.');

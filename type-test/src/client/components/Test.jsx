@@ -60,6 +60,7 @@ const Test = () => {
     setAccuracy(100);
     setSpeed(0);
     setCorrectWrong(Array(charRefs.current.length).fill(''));
+    inputRef.current.value = '';
     inputRef.current.focus();
     charRefs.current = [];
   }
