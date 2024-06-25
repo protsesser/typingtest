@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const Leaderboard = () => {
+const Leaderboard = (openResults) => {
   const [attempts, setAttempts] = useState([]);
   
 
@@ -10,13 +10,13 @@ const Leaderboard = () => {
         const response = await fetch('/api/leaderboard');
         const data = await response.json();
         setAttempts(data);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching top attempts:', error);
       }
     };
-
 		fetchTopAttempts();
-  }, []);
+  }, [openResults]);
 
   return (
     <div className="">

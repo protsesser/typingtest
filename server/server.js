@@ -60,6 +60,29 @@ app.get('/attempts/:user_id', async (req, res) => {
   }
 });
 
+app.get('/attempt/:id', async (req, res) => {
+  const attemptId = req.params.id;
+
+  try {
+    const attempt = await Attempt.findOne({
+      where: { id: attemptId },
+      include: [
+        { model: User, attributes: ['id', 'name'] },
+        { model: Text, attributes: ['id', 'content'] }
+      ],
+    });
+
+    if (!attempt) {
+      return res.status(404).json({ error: 'Attempt not found' });
+    }
+
+    res.json(attempt);
+  } catch (error) {
+    console.error('Error fetching attempt:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/texts/:id', async (req, res) => {
   try {
     const text = await Text.findByPk(req.params.id);
@@ -79,17 +102,11 @@ app.get('/leaderboard', async (req, res) => {
       attributes: ['id', 'speed', 'accuracy', 'score', 'user_id', 'text_id'],
       order: [['score', 'DESC']],
     });
+    const topAttempts = attempts
+      .sort((a, b) => b.maxScore - a.maxScore)
+      .slice(0, 10);
 
-    const uniqueUserAttempts = {};
-    for (const attempt of attempts) {
-      if (!uniqueUserAttempts[attempt.userId]) {
-        uniqueUserAttempts[attempt.userId] = attempt;
-      }
-    }
-
-    const uniqueAttemptsArray = Object.values(uniqueUserAttempts);
-
-    res.json(uniqueAttemptsArray);
+    res.json(topAttempts);
   } catch (error) {
     console.error('Error fetching top attempts:', error);
     res.status(500).json({ error: 'Internal server error' });

@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import './styles.css';
-import Results from "./Results";
 
-const Test = () => {
+const Test = ({ setOpenResults, setLastAttemptId }) => {
   const [text, setText] = useState('');
   const [textId, setTextId] = useState(1);
 
@@ -14,11 +13,9 @@ const Test = () => {
   const [charIndex, setCharIndex] = useState(0);
   const inputRef = useRef(null);
   const charRefs = useRef([]);
-	const [correctWrong, setCorrectWrong] = useState([]);
-	const [duration, setDuration] = useState(0);
+  const [correctWrong, setCorrectWrong] = useState([]);
+  const [duration, setDuration] = useState(0);
   const [score, setScore] = useState(0);
-
-  const [openResults, setOpenResults] = useState();
 
   useEffect(() => {
     const fetchText = async () => {
@@ -38,7 +35,7 @@ const Test = () => {
     return isNaN(value) || value < 0 || value > 10000 || !value || value === Infinity ? 0 : value;
   };
 
-  function updateTimer(){
+  function updateTimer() {
     const currentDuration = verifyValue(((Date.now() - startTime) / 1000).toFixed(0));
     const correctChars = charIndex - mistakes;
     const percent = verifyValue((correctChars / charIndex * 100).toFixed(0));
@@ -46,10 +43,10 @@ const Test = () => {
     setDuration(currentDuration);
     setAccuracy(percent);
     setSpeed(wpm);
-    const calculateScore = (speed * (2*accuracy));
+    const calculateScore = (speed * (2 * accuracy));
     setScore(calculateScore);
   };
-	
+
   const restartTest = () => {
     console.log(textId);
     setIsTyping(false);
@@ -64,9 +61,10 @@ const Test = () => {
     inputRef.current.focus();
     charRefs.current = [];
   }
+
   useEffect(() => {
     inputRef.current.focus();
-		setCorrectWrong(Array(charRefs.current.length).fill(''));
+    setCorrectWrong(Array(charRefs.current.length).fill(''));
   }, []);
 
   useEffect(() => {
@@ -91,12 +89,12 @@ const Test = () => {
       }
       if (typedChar === currentChar.textContent) {
         setCharIndex((prevIndex) => prevIndex + 1);
-				correctWrong[charIndex] = " correct ";
+        correctWrong[charIndex] = " correct ";
       } else {
         setMistakes((prevMistakes) => prevMistakes + 1);
         setCharIndex((prevIndex) => prevIndex + 1);
-				correctWrong[charIndex] = " wrong ";
-      }      
+        correctWrong[charIndex] = " wrong ";
+      }
       updateTimer();
       if (charIndex === characters.length - 1) {
         setIsTyping(false);
@@ -122,7 +120,7 @@ const Test = () => {
       accuracy: accuracy,
       score: score,
       user_id: user.id,
-      text_id: textId,      
+      text_id: textId,
     };
 
     try {
@@ -136,6 +134,8 @@ const Test = () => {
 
       const data = await response.json();
       console.log('Test result saved:', data);
+      setLastAttemptId(data.id);
+      console.log(`last attempt id: ${data.id}`)
     } catch (error) {
       console.error('Error saving test result:', error);
     }
@@ -160,8 +160,7 @@ const Test = () => {
         }
       </div>
       <button className="btn" onClick={changeText}>Новый текст</button>
-    <Results openResults={openResults} onClose={()=>setOpenResults(false)} speed={speed} accuracy={accuracy} score={score}/>
-    </div>    
+    </div>
   );
 };
 

@@ -6,13 +6,14 @@ import Test from "./components/Test";
 import Register from "./components/Register";
 import Leaderboard from "./components/Leaderboard";
 import UserAttempts from "./components/UserAttempts";
+import Results from "./components/Results";
 
 
 function App() {
   const [openLogin, setOpenLogin] = useState(true);
   const [logReg, setLogReg] = useState(true);
-
-  const [testFinished, setTestFinished] = useState(false);
+  const [lastAttemptId, setLastAttemptId] = useState(null);
+  const [openResults, setOpenResults] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -24,22 +25,21 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    //setIsLogged(false);  
     setOpenLogin(true);  
   };
 
   return (
     <div className="App">
       <button onClick={handleLogout}>Выйти из аккаунта</button>
-      <UserAttempts/>
-      <Test/>
-
+      <UserAttempts openResults={openResults}/>
+      <Test setOpenResults={setOpenResults} setLastAttemptId={setLastAttemptId}/>
+      {openResults && <Results openResults={openResults} onClose={()=>setOpenResults(false)} lastAttemptId={lastAttemptId}/>}
       {(logReg ? (
         <Login setOpenLogin={setOpenLogin} openLogin={openLogin} setLogReg={setLogReg}/>
       ) : (
         <Register setOpenLogin={setOpenLogin} openLogin={openLogin} setLogReg={setLogReg}/>
       ))}
-      <Leaderboard/>
+      <Leaderboard openResults={openResults}/>
     </div>
   );
 }

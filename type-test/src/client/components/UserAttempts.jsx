@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-const UserAttempts = () => {
+const UserAttempts = (openResults) => {
   const [attempts, setAttempts] = useState([]);
 
   useEffect(() => {
+
     const fetchUserAttempts = async () => {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || !user.id) {
@@ -31,7 +32,7 @@ const UserAttempts = () => {
     };
 
     fetchUserAttempts();
-  }, []);
+  }, [openResults]);
 
   return (
     <div>
