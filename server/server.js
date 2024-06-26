@@ -27,7 +27,7 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { email, password } });
     if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials' });
+      return res.status(400).json({ error: 'Неверные данные входа' });
     }
     res.json(user);
   } catch (err) {
@@ -142,11 +142,11 @@ app.post('/user-attempts', async (req, res) => {
 
 sequelize.sync()
   .then(() => {
-    console.log('Database synced successfully.');
+    console.log('Подключение к базе данных успешно');
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
   })
   .catch(err => {
-    console.error('Unable to sync database:', err);
+    console.error('Не удалось подключиться к базе данных:', err);
   });

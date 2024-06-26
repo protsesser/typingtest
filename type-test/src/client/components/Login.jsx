@@ -24,17 +24,15 @@ const Login = ({setOpenLogin, openLogin, setLogReg}) => {
       }
 
       const data = await response.json();
-      //setMessage(`Welcome, ${data.name}!`);
 			localStorage.setItem('user', JSON.stringify(data));
       setOpenLogin(false);
-      //setIsLogged(true);
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
+      setMessage(`${error.message}`);
     }
   };
 
   return (
-    <div className={`fixed z-50 inset-0 flex justify-center items-center transition-colors ${openLogin ? "visible bg-black/20" : "invisible"}`}>
+    <div className={`fixed z-50 inset-0 flex justify-center items-center transition-colors ${openLogin ? "visible bg-black/40" : "invisible"}`}>
       <div className={`bg-zinc-700 rounded-lg shadow p-6
       transition-all max-w-md`}>
         <form onSubmit={handleLogin}>
